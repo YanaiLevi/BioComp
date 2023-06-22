@@ -69,6 +69,7 @@ def getAllSubGraphs(n, graph):
     
     return subgraphs
 
+
 if __name__ == "__main__":
     n = int(input("Enter the value of n: "))
     graph_input = input("Enter the graph edges: ")
