@@ -1,83 +1,78 @@
+import itertools
+from tqdm import tqdm
+import networkx as nx
+from networkx import DiGraph
 
-from itertools import combinations
 
-# a function that takes a list of edges and the number of nodes as arguments and returns a list of all the possible names of the nodes
-def find_connected_subgraphs(edges):
-    def dfs(node, graph, visited, subgraph):
-        visited[node] = True
-        subgraph.append(node)
+# count all the motifs in a graph of size n
+def countMotifs(graph, size):
+    allMotifs = []
+    motifCount = 0
+    for i in tqdm(range(size-1, size*(size-1)+1)):
+        curMotifs = []  # tuple that contains graphs and their motifs count
+        combinations = [list(x) for x in itertools.combinations(graph.edges(), i)]  # all edges combinations
+        for combination in combinations:
+            cur_graph = nx.DiGraph()
+            cur_graph.add_edges_from(combination)
+            if len(cur_graph.nodes) != size:
+                continue
+            if not nx.is_connected(cur_graph.to_undirected()):
+                continue
+            is_isomorphic = any(nx.is_isomorphic(contender[0], cur_graph) for contender in curMotifs)
+            if is_isomorphic:
+                for j, contender in enumerate(curMotifs):
+                    if nx.is_isomorphic(contender[0], cur_graph):
+                        temp = list(curMotifs[j])
+                        temp[1] += 1
+                        curMotifs[j] = tuple(temp)
+                        break
+            else:
+                curMotifs.append((cur_graph, 1))
+                motifCount += 1
+        allMotifs.append(curMotifs)
 
-        for neighbor in graph[node]:
-            if not visited[neighbor]:
-                dfs(neighbor, graph, visited, subgraph)
+    return allMotifs, motifCount
 
-    graph = {}
+# print graph edges
+def printMotifs(edges):
+    str_to_print = ""
     for edge in edges:
-        u, v = edge
-        if u not in graph:
-            graph[u] = []
-        if v not in graph:
-            graph[v] = []
-        graph[u].append(v)
+        str_to_print += f"{edge[0]} {edge[1]}\n"
+    return str_to_print
 
-    visited = {node: False for node in graph}
-    connected_subgraphs = []
 
-    for node in graph:
-        if not visited[node]:
-            subgraph = []
-            dfs(node, graph, visited, subgraph)
-            connected_subgraphs.append(subgraph)
+def printToTerminal(motifs, count):
+    str_to_print = ""
+    i = 1
+    str_to_print += f"count={count}\n"
+    str_to_print += f"total motifs={count}\n"
+    for lst in motifs:
+        for motif in lst:
+            str_to_print += f"#{i}\n"
+            str_to_print += f"count={motif[1]}\n"
+            i += 1
+            str_to_print += printMotifs(motif[0].edges)
+    print(str_to_print)
 
-    subgraph_edges = []
-    for subgraph in connected_subgraphs:
-        subgraph_edge_set = set()
-        for node in subgraph:
-            for neighbor in graph[node]:
-                if neighbor in subgraph:
-                    subgraph_edge_set.add((node, neighbor))
-        subgraph_edges.extend(list(subgraph_edge_set))
 
-    return [subgraph_edges[i:] for i in range(len(subgraph_edges))]
+# parse the graph and start the program
+def parseAndStart(graph_str, n):
+    edges_str_arr = graph_str.split("\n")
+    new_edges = [(int(edge.split(" ")[0]), int(edge.split(" ")[1])) for edge in edges_str_arr if edge]
+    # create a graph
+    g = nx.DiGraph()
+    g.add_edges_from(new_edges)
+    motifs, count = countMotifs(g, n)
+    printToTerminal(motifs, count)
 
-# get all the subgraphs with n nodes of a graph
-def getAllSubGraphs(n, graph):
-    vertices = set()
-    edges = []
-    
-    # Parse the graph input
-    for edge in graph.split(','):
-        if edge.strip() == '':
-            continue
-        u, v = map(int, edge.strip().split())
-        vertices.add(u)
-        vertices.add(v)
-        edges.append((u, v))
-    
-    # Generate all combinations of n vertices
-    combinations_vertices = combinations(vertices, n)
-    
-    # Generate all subgraphs using the combinations of vertices
-    subgraphs = []
-    for comb in combinations_vertices:
-        possible_subgraph_edges = []
-        for edge in edges:
-            if edge[0] in comb and edge[1] in comb:
-                possible_subgraph_edges.append(edge)
-        for subgraph_edges in find_connected_subgraphs(possible_subgraph_edges):
-            subgraphs.append(subgraph_edges)
-    
-    return subgraphs
+
 
 if __name__ == "__main__":
+    # get n from user
     n = int(input("Enter the value of n: "))
-    graph_input = input("Enter the graph edges: ")
-    graph_input = "1 2,2 3,1 4,2 1"
-
-    subgraphs = getAllSubGraphs(n, graph_input)
-
-    # Output the subgraphs
-    print("Subgraphs of size", n, ":")
-    for subgraph in subgraphs:
-        print(subgraph)
+    # get graph from file
+    with open("input.txt", "r") as file:
+        graph_str = file.read()
+    # parse and start
+    parseAndStart(graph_str, n)
 
