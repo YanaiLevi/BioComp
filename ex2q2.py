@@ -69,6 +69,7 @@ def getAllSubGraphs(n, graph):
     
     return subgraphs
 
+<<<<<<< HEAD
 if __name__ == "__main__":
     n = int(input("Enter the value of n: "))
     graph_input = input("Enter the graph edges: ")
@@ -80,4 +81,17 @@ if __name__ == "__main__":
     print("Subgraphs of size", n, ":")
     for subgraph in subgraphs:
         print(subgraph)
+=======
+# Test the program
+n = int(input("Enter the value of n: "))
+graph_input = input("Enter the graph edges in the format 'u v' (one edge per line, empty line to finish): ")
+graph_input = "1 2,2 3,1 4,2 1"
+
+subgraphs = getAllSubGraphs(n, graph_input)
+
+# Output the subgraphs
+print("Subgraphs of size", n, ":")
+for subgraph in subgraphs:
+    print(subgraph)
+>>>>>>> dc87e7ee28cde4206984a803e66f95e6fbf8ff1a
 
