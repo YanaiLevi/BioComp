@@ -1,5 +1,7 @@
 # Computational Biology
 
+link to git hub: https://github.com/YanaiLevi/BioComp.git
+
 1.
 
     a) The code is in ex2q1.py, to use it you need to run the python file and the results will be printed to terminal. I used the itertools.permutations to get all the permutations.
