@@ -2,7 +2,7 @@
 
 1.
 
-    a) The code is in ex2q1.py
+    a) The code is in ex2q1.py, to use it you need to run the python file and the results will be printed to terminal. I used the itertools.permutations to get all the permutations.
 
     b) The results are at the end of this file
 
@@ -14,7 +14,9 @@
 
 2.
 
-    The code is in ex2q2.py
+    The code is in ex2q2.py, to use it you need to write the graph in "input.txt" file and then run the program, it will ask you to enter "n", the result will be printed to terminal.
+
+I used nx.DiGraph() for graph related functions.
 
 
 

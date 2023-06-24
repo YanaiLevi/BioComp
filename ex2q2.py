@@ -1,7 +1,6 @@
 import itertools
 from tqdm import tqdm
 import networkx as nx
-from networkx import DiGraph
 
 
 # count all the motifs in a graph of size n
@@ -12,22 +11,22 @@ def countMotifs(graph, size):
         curMotifs = []  # tuple that contains graphs and their motifs count
         combinations = [list(x) for x in itertools.combinations(graph.edges(), i)]  # all edges combinations
         for combination in combinations:
-            cur_graph = nx.DiGraph()
-            cur_graph.add_edges_from(combination)
-            if len(cur_graph.nodes) != size:
+            curGraph = nx.DiGraph()
+            curGraph.add_edges_from(combination)
+            if len(curGraph.nodes) != size:
                 continue
-            if not nx.is_connected(cur_graph.to_undirected()):
+            if not nx.is_connected(curGraph.to_undirected()):
                 continue
-            is_isomorphic = any(nx.is_isomorphic(contender[0], cur_graph) for contender in curMotifs)
+            is_isomorphic = any(nx.is_isomorphic(contender[0], curGraph) for contender in curMotifs)
             if is_isomorphic:
                 for j, contender in enumerate(curMotifs):
-                    if nx.is_isomorphic(contender[0], cur_graph):
+                    if nx.is_isomorphic(contender[0], curGraph):
                         temp = list(curMotifs[j])
                         temp[1] += 1
                         curMotifs[j] = tuple(temp)
                         break
             else:
-                curMotifs.append((cur_graph, 1))
+                curMotifs.append((curGraph, 1))
                 motifCount += 1
         allMotifs.append(curMotifs)
 
@@ -35,24 +34,24 @@ def countMotifs(graph, size):
 
 # print graph edges
 def printMotifs(edges):
-    str_to_print = ""
+    strToPrint = ""
     for edge in edges:
-        str_to_print += f"{edge[0]} {edge[1]}\n"
-    return str_to_print
+        strToPrint += f"{edge[0]} {edge[1]}\n"
+    return strToPrint
 
 
 def printToTerminal(motifs, count):
-    str_to_print = ""
+    strToPrint = ""
     i = 1
-    str_to_print += f"count={count}\n"
-    str_to_print += f"total motifs={count}\n"
+    strToPrint += f"count={count}\n"
+    strToPrint += f"total motifs={count}\n"
     for lst in motifs:
         for motif in lst:
-            str_to_print += f"#{i}\n"
-            str_to_print += f"count={motif[1]}\n"
+            strToPrint += f"#{i}\n"
+            strToPrint += f"count={motif[1]}\n"
             i += 1
-            str_to_print += printMotifs(motif[0].edges)
-    print(str_to_print)
+            strToPrint += printMotifs(motif[0].edges)
+    print(strToPrint)
 
 
 # parse the graph and start the program
@@ -62,7 +61,9 @@ def parseAndStart(graph_str, n):
     # create a graph
     g = nx.DiGraph()
     g.add_edges_from(new_edges)
+    # count motifs
     motifs, count = countMotifs(g, n)
+    # print to terminal
     printToTerminal(motifs, count)
 
 
